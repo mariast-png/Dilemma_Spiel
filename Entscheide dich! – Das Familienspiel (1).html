@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Entscheide dich! – Das Familienspiel</title>
+<style>
+:root{--bg1:#ffe0f0;--bg2:#dce8ff;--ink:#2b2350;--card:#ffffffd9;--line:#2b235022;--p0:#8b5cf6;--p1:#ff8a00;--ok:#1fa96a;--acc:#ff4f9a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#2a1347;--bg2:#10224d;--ink:#f6f0ff;--card:#ffffff17;--line:#ffffff2e}}
+:root[data-theme="dark"]{--bg1:#2a1347;--bg2:#10224d;--ink:#f6f0ff;--card:#ffffff17;--line:#ffffff2e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2)) fixed;color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:16px 14px 40px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h1{margin:0;font-size:clamp(1.5rem,6vw,2.2rem);letter-spacing:-.5px}
+h1 span{background:linear-gradient(90deg,var(--acc),var(--p0));-webkit-background-clip:text;background-clip:text;color:transparent}
+#score{font-weight:700;background:var(--card);border:2px solid var(--line);border-radius:99px;padding:6px 14px;font-size:.95rem}
+.card{background:var(--card);border:2px solid var(--line);border-radius:26px;padding:20px;margin-top:16px;backdrop-filter:blur(6px);box-shadow:0 10px 30px #6a3cff22}
+label{display:block;font-weight:700;margin:12px 0 4px}
+input{width:100%;font:inherit;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:inherit}
+.modes{display:flex;gap:8px;flex-wrap:wrap}
+.modes button{flex:1;min-width:100px}
+button{font:inherit;font-weight:800;cursor:pointer;border:0;border-radius:16px;padding:12px 16px;color:inherit;background:var(--card);border:2px solid var(--line)}
+button.sel{background:var(--p0);color:#fff;border-color:transparent}
+.big{width:100%;margin-top:18px;font-size:1.2rem;padding:15px;background:linear-gradient(90deg,var(--acc),var(--p0));color:#fff;border:0;box-shadow:0 8px 20px #ff4f9a55}
+.big:active,.opt:active{transform:scale(.98)}
+#tag{display:inline-block;font-size:.85rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:5px 12px;border-radius:99px;background:var(--acc);color:#fff}
+#tag.d{background:var(--p1)}
+h2{font-size:clamp(1.25rem,5vw,1.7rem);line-height:1.25;margin:12px 0}
+#sit{margin:-4px 0 12px;font-size:1.05rem;line-height:1.4}
+#status{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.pill{font-size:.85rem;font-weight:700;padding:4px 12px;border-radius:99px;border:2px dashed var(--line)}
+.pill.ok{border-style:solid;color:#fff;border-color:transparent}
+.opt{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;border:3px solid var(--line);border-radius:20px;padding:14px;margin:10px 0;background:var(--card);transition:.2s}
+.opt.win{border-color:var(--ok);box-shadow:0 0 0 4px #1fa96a33;transform:scale(1.015)}
+.L{grid-row:span 2;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:900;color:#fff;background:var(--acc)}
+.opt:nth-child(2) .L{background:var(--p0)}.opt:nth-child(3) .L{background:var(--p1)}
+.opt b{font-size:1.1rem;line-height:1.3}.opt small{display:block;opacity:.8;margin-top:2px;font-size:.92rem}
+.chips{grid-column:1/-1;display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.chips button{flex:1;padding:8px;font-size:.95rem}
+.chips button[data-p="0"]{border-color:var(--p0)}.chips button[data-p="1"]{border-color:var(--p1)}
+.chips button:disabled{opacity:.35;cursor:default}
+.who{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+.who span{color:#fff;font-weight:800;font-size:.85rem;padding:4px 12px;border-radius:99px}
+#res{margin-top:12px;font-size:1.05rem;line-height:1.45}
+#res strong{display:block;font-size:1.3rem;margin-bottom:4px}
+#talk{margin-top:8px;padding:12px 14px;border-radius:16px;background:var(--line);font-style:italic}
+.link{background:none;border:0;text-decoration:underline;font-weight:600;padding:6px;margin-top:14px;opacity:.8}
+.fall{position:fixed;top:-40px;font-size:1.8rem;pointer-events:none;animation:fall 2.4s linear forwards;z-index:9}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.fall{display:none}.opt{transition:none}}
+:root{--p2:#12b5a6;--p3:#ef4444}
+.chips button[data-p="2"]{border-color:var(--p2)}.chips button[data-p="3"]{border-color:var(--p3)}
+.cnt{display:flex;gap:8px}.cnt button{flex:1}
+.ghost{background:var(--card);color:var(--ink);border:2px solid var(--line);box-shadow:none}
+#cert{position:fixed;inset:0;background:#120a2aee;overflow:auto;padding:calc(16px + env(safe-area-inset-top,0px)) 14px 30px;z-index:20}
+.paper{max-width:640px;margin:0 auto;background:#fffaf0;color:#3b2a14;padding:10px;border-radius:12px;box-shadow:0 20px 50px #0008;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.frame{border:5px double #c9972b;border-radius:8px;padding:26px 16px;text-align:center;background:radial-gradient(circle at 50% 0,#fff3c9,#fffaf0 60%)}
+.frame p{margin:8px 0;font-size:1rem}
+.orn{letter-spacing:8px;color:#c9972b;font-size:1.2rem}
+.ct{font:900 clamp(2rem,9vw,3rem) Georgia,serif;color:#8a5a00;text-transform:uppercase;letter-spacing:3px;margin-top:6px}
+.cs{font:italic 1.3rem Georgia,serif;color:#c9972b;margin-bottom:12px}
+.cn{font:700 clamp(1.5rem,7vw,2.2rem) "Segoe Script","Brush Script MT",cursive,Georgia,serif;line-height:1.5;margin:8px 0}.cn i{color:#ff4f9a;font-style:normal}
+.seal{width:124px;height:124px;margin:14px auto;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#ffd86b,#e0a526);border:6px double #fff3c9;box-shadow:0 6px 16px #8a5a0066;color:#6b4300;font-size:2.1rem}
+.lv{font:800 1.4rem Georgia,serif;color:#8a5a00}
+.pl{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0;font-size:.9rem}.pl span{background:#fff1c9;border-radius:99px;padding:3px 11px}
+.dt{font-size:.8rem;opacity:.75;margin-top:14px}
+.acts{max-width:640px;margin:14px auto 0;text-align:center;color:#fff}
+.acts .ghost{color:#fff;background:#ffffff22;border-color:#ffffff55}
+@media print{body{background:#fff}body>*:not(#cert){display:none!important}#cert{position:static;background:none;overflow:visible;padding:0}.acts{display:none}.paper{box-shadow:none}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<header><h1>🎲 <span>Entscheide dich!</span></h1><div id="score" hidden></div></header>
+
+<section id="start" class="card">
+  <p style="margin:0;font-size:1.05rem">Würdest du lieber…? Dilemmas? Bei jeder Frage wählt ihr heimlich – dann wird aufgedeckt, wie gut ihr euch kennt.</p>
+  <label>Wie viele spielen?</label>
+  <div class="cnt" id="cnt"><button data-c="2" class="sel">2 Personen</button><button data-c="3">3</button><button data-c="4">4</button></div>
+  <div id="np0"><label for="n0">Name 1</label><input id="n0" value="Spieler 1" maxlength="14"></div>
+  <div id="np1"><label for="n1">Name 2</label><input id="n1" value="Spieler 2" maxlength="14"></div>
+  <div id="np2" hidden><label for="n2">Name 3</label><input id="n2" value="Spieler 3" maxlength="14"></div>
+  <div id="np3" hidden><label for="n3">Name 4</label><input id="n3" value="Spieler 4" maxlength="14"></div>
+  <label>Fragenmix</label>
+  <div class="modes" id="modes">
+    <button class="sel" data-m="mix">🎭 Alles gemischt</button>
+    <button data-m="wyr">⚖️ Würdest du lieber</button>
+    <button data-m="dil">🧠 Dilemmas</button>
+  </div>
+  <button class="big" id="go">Los geht's! 🚀</button>
+</section>
+
+<section id="game" class="card" hidden>
+  <span id="tag"></span>
+  <h2 id="q"></h2>
+  <p id="sit" hidden></p>
+  <div id="status"></div>
+  <div id="opts"></div>
+  <div id="res"></div>
+  <button class="big" id="next" hidden>Nächste Frage ➜</button>
+  <button class="big ghost" id="certbtn" hidden>🏅 Übereinstimmungs-Zertifikat</button>
+  <button class="link" id="reset">Zurück zum Start</button>
+</section>
+</main>
+
+<div id="cert" hidden></div>
+<script>
+const $=s=>document.querySelector(s),pick=a=>a[Math.random()*a.length|0];
+const cap=s=>s[0].toUpperCase()+s.slice(1),low=s=>s[0].toLowerCase()+s.slice(1);
+const two=a=>{let i=Math.random()*a.length|0,j;do{j=Math.random()*a.length|0}while(j==i);return[a[i],a[j]]};
+
+/* ---------- Fragen-Bausteine ---------- */
+const CATS=[
+{e:'🏖️',n:'Urlaub',q:'Wohin soll der nächste Urlaub gehen?',i:['Luxushotel in der Wüste','Bambushütte am Strand','Baumhaus im Dschungel','Iglu-Hotel in Lappland','Kreuzfahrtschiff um die Welt','Bauernhof mit vielen Tieren','Tokio mit Manga-Läden und Ramen','Wohnmobil-Roadtrip durch Kanada','Zelt an einem Bergsee','Hotel mitten im Freizeitpark','Hausboot in Schweden','Skihütte in den Alpen']},
+{e:'🦸',n:'Superkraft',q:'Welche Superkraft hättest du lieber?',i:['Fliegen können','Unsichtbar sein können','Gedanken lesen können','Mit Tieren sprechen können','Die Zeit anhalten können','Dich überallhin teleportieren können','Blitzschnell rennen können','Jede Sprache sofort verstehen','Dinge mit Gedanken bewegen','Dich in jedes Tier verwandeln können']},
+{e:'🍕',n:'Essen',q:'Ein ganzes Jahr nur dieses Essen – welches?',i:['Nur Pizza','Nur Pasta','Nur Pommes','Nur Sushi','Nur Pfannkuchen','Nur Eis','Nur Döner','Nur Burger','Nur Tacos','Nur Reis mit Soße']},
+{e:'🐾',n:'Haustier',q:'Welches Haustier darf bei euch einziehen?',i:['Ein Hund','Eine Katze','Ein Pferd','Ein Kaninchen','Ein Papagei','Ein kleiner Drache (echt!)','Ein Mini-Schwein','Ein Axolotl','Ein Faultier','Ein Otter']},
+{e:'⏳',n:'Zeitreise',q:'Deine Zeitmaschine springt an – wohin?',i:['Ins Mittelalter','In das Jahr 3000','Zu den Dinosauriern','Ins alte Ägypten','In die Kindheit deiner Eltern','In die Zeit der Piraten','Ins Jahr 1920 nach Paris','Zehn Jahre in deine eigene Zukunft']},
+{e:'🌟',n:'Talent',q:'Welches Talent hättest du lieber?',i:['Super singen können','Perfekt tanzen können','Jedes Instrument spielen können','Unglaublich gut zeichnen können','Einen Bestseller schreiben können','Jedes Spiel gewinnen können','Alles sofort auswendig lernen','Jeden Menschen zum Lachen bringen']},
+{e:'🏠',n:'Zuhause',q:'Du darfst dein Zuhause aufmotzen – womit?',i:['Ein Pool im Haus','Eine Rutsche statt Treppe','Ein Baumhaus im Garten','Ein Kino im Keller','Eine Bibliothek mit Geheimtür','Ein Trampolin-Zimmer','Eine eigene Eisdiele','Ein Zimmer mit Sternenhimmel-Decke']},
+{e:'🎡',n:'Ausflug',q:'Wohin geht der Familienausflug?',i:['Freizeitpark','Wasserpark','Zoo hinter den Kulissen','Escape Room','Klettergarten','Konzert','Shopping-Tour','Kino mit Popcorn ohne Ende']},
+{e:'👑',n:'Berufe',q:'Was wärst du gern einen Tag lang?',i:['Astronautin','Tierärztin','Popstar','Detektivin','Chefköchin im Sternerestaurant','Filmregisseurin','Zirkusartistin','Meeresforscherin','Bundeskanzlerin','Erfinderin']}
+];
+const CLASSIC=[
+['Urlaub im Luxushotel in der Wüste','Urlaub in einer Bambushütte am Strand'],
+['Einen Tag lang Lehrerin an deiner Schule sein','Einen Tag lang Bürgermeisterin deiner Stadt sein'],
+['Abends lange aufbleiben, morgens früh aufstehen','Morgens ausschlafen, abends früh ins Bett'],
+['Beim Konzert in der ersten Reihe stehen','Backstage deinen Lieblingsstar treffen – aber nur 1 Minute'],
+['Immer Schnee und Winter','Immer Sonne und Sommer'],
+['Einen Tag lang alles rückwärts sprechen','Einen Tag lang nur singen statt reden'],
+['Nie wieder nass werden','Nie wieder frieren'],
+['Jeden Tag Frühstück im Bett','Jeden Tag ein Picknick draußen'],
+['Dein Leben als Film – alle dürfen es sehen','Dein Leben als Buch – nur du entscheidest, wer es liest'],
+['Dein Zimmer jeden Tag automatisch aufgeräumt','Jeden Tag ein neues Outfit, das perfekt passt']
+];
+const BEN=['Unbegrenzt Taschengeld','Jede Woche einen Tag schulfrei','Einen Roboter-Butler, der aufräumt','Immer perfektes Wetter','In jeden Freizeitpark gratis dürfen','Ein Zimmer so groß wie eine Turnhalle','Jeden Tag deinen Lieblingsnachtisch','Eine Stunde mehr Freizeit pro Tag','Immer den besten Sitzplatz überall','Ein Wunsch pro Woche, der sich erfüllt'];
+const BAD=['du musst jeden Morgen um 5 Uhr aufstehen','du darfst nie wieder Süßigkeiten essen','du musst alles mit anderen teilen','du musst jeden Tag ein Lied vor Publikum singen','du musst immer Socken in Sandalen tragen','du darfst nur noch flüstern','du musst jeden Tag kalt duschen','du musst jeden Tag eine Extra-Aufgabe in Mathe lösen','du darfst deine Lieblingsserie nie wieder schauen','du musst überall Gummistiefel tragen'];
+const PER=['Deine beste Freundin','Dein Geschwisterkind','Das neue Mädchen in der Klasse','Deine Oma','Ein Mädchen, das du nicht so magst'];
+const RES=['das einzige Konzertticket','den letzten Platz im Kino','das letzte Stück vom Lieblingskuchen','die letzte freie Stunde am Tablet','50 Euro, die du gespart hast','den freien Platz in deinem Team','den Fensterplatz im Urlaubsflug','deine neue, ungetragene Lieblingsjacke'];
+const DIL=[
+{s:'Du siehst, wie eine Mitschülerin im Test abschreibt. Sie ist deine Freundin.',o:['Nichts sagen','Nach dem Test mit ihr reden','Der Lehrkraft Bescheid sagen']},
+{s:'Du findest auf dem Schulhof einen 50-Euro-Schein. Niemand hat es gesehen.',o:['Behalten','Im Sekretariat abgeben','Rumfragen, wem er gehört']},
+{s:'Zwei Freundinnen laden dich am selben Tag zum Geburtstag ein. Beide sind dir wichtig.',o:['Zur besten Freundin gehen','Zur anderen gehen','Bei beiden kurz vorbeischauen']},
+{s:'In der Klassen-Chatgruppe wird ein Kind ausgelacht. Alle schreiben Lach-Smileys.',o:['Mitlachen, ist ja nur ein Chat','Nichts schreiben','Widersprechen und dem Kind privat schreiben']},
+{s:'Du hast aus Versehen die Lieblingsvase deiner Mama zerbrochen. Keiner hat es gemerkt.',o:['Heimlich entsorgen','Sofort beichten','Selbst Ersatz besorgen und dann beichten']},
+{s:'Dein Geschwisterkind hat etwas Verbotenes gemacht und bittet dich: „Sag nichts!“',o:['Dichthalten','Alles erzählen','Zuerst darauf bestehen, dass es selbst gesteht']},
+{s:'Eine Freundin schickt dir ein sehr peinliches Foto von einer anderen. Alle teilen es schon.',o:['Auch weiterschicken','Löschen und nichts tun','Löschen und die Betroffene warnen']},
+{s:'Die Verkäuferin gibt dir 10 Euro zu viel Wechselgeld. Du bemerkst es erst draußen.',o:['Freuen und behalten','Zurückgehen und es zurückgeben','Nächstes Mal dort mehr kaufen']},
+{s:'Bei der Gruppenarbeit macht ein Mädchen nichts. Die Note zählt für alle.',o:['Alles allein machen','Die Lehrkraft informieren','Offen mit ihr reden und Aufgaben verteilen']},
+{s:'Ein neues Kind sitzt in der Pause allein. Deine Clique ruft dich zum Spielen.',o:['Zur Clique gehen','Beim neuen Kind bleiben','Das neue Kind einfach mitnehmen']},
+{s:'Du sparst seit Monaten auf etwas Großes. Heute gibt es etwas, das du SOFORT willst.',o:['Sparziel durchziehen','Alles jetzt ausgeben','Einen Teil jetzt, den Rest sparen']},
+{s:'Deine Freundin erzählt dir im Vertrauen, dass es ihr zuhause gerade gar nicht gut geht.',o:['Geheimnis behalten','Einer erwachsenen Vertrauensperson davon erzählen','Sie fragen, ob sie mit einem Erwachsenen reden will']},
+{s:'Du darfst nur eine Stunde ans Handy. Alle deine Freundinnen sind online und spielen gemeinsam.',o:['Länger spielen und heimlich weitermachen','Die Zeit einhalten und das Spiel verpassen','Mit den Eltern über eine Ausnahme verhandeln']}
+];
+const TALK=['Warum habt ihr so gewählt? Jede nennt ihren besten Grund!','Wie würde eure beste Freundin hier entscheiden?','Was würdet ihr in 10 Jahren anders wählen?','Überzeugt euch gegenseitig – wer schafft es, die andere umzustimmen?','Was wäre die mutigste Wahl, was die klügste?','Gibt es eine dritte Option, die noch besser wäre?','Was würde Mama dazu sagen? Und was ihr?'];
+
+/* ---------- Generatoren ---------- */
+const gen={
+ classic(){const p=pick(CLASSIC);return{k:p.join(),tag:'🌈 Würdest du lieber…',q:'Würdest du lieber…?',o:p.map(t=>({t}))}},
+ cat(){const c=pick(CATS),p=two(c.i);return{k:'c'+p.sort().join(),tag:c.e+' '+c.n,q:c.q,o:p.map(t=>({t}))}},
+ trade(){const b=two(BEN),d=two(BAD);return{k:'t'+b[0]+d[0]+b[1]+d[1],tag:'😬 Mit Haken',q:'Was nimmst du – mit Haken?',o:[0,1].map(i=>({t:b[i],s:'Aber: '+d[i]}))}},
+ dil(){const d=pick(DIL);return{k:d.s,dil:1,tag:'🧠 Dilemma',q:'Was tust du?',sit:d.s,o:d.o.map(t=>({t}))}},
+ dil2(){const r=pick(RES),p=two(PER);return{k:'d'+r+p.sort().join(),dil:1,tag:'🧠 Dilemma',q:'Wem gibst du es?',sit:`Du darfst entscheiden, wer ${r} bekommt. Sowohl ${low(p[0])} als auch ${low(p[1])} wollen es unbedingt.`,o:[{t:p[0]+' bekommt es'},{t:p[1]+' bekommt es'},{t:'Eine andere Lösung finden'}]}}
+};
+let seen=new Set();try{seen=new Set(JSON.parse(localStorage.getItem('ed_seen')||'[]'))}catch(e){}
+function nextQ(){
+ let q;
+ for(let t=0;t<60;t++){
+  const dilT=mode=='dil'||(mode=='mix'&&Math.random()<.33);
+  const r=Math.random();
+  q=dilT?(r<.5?gen.dil():gen.dil2()):(r<.15?gen.classic():r<.6?gen.cat():gen.trade());
+  if(!seen.has(q.k))break;
+ }
+ seen.add(q.k);
+ if(seen.size>4000)seen=new Set([...seen].slice(-2000));
+ try{localStorage.setItem('ed_seen',JSON.stringify([...seen]))}catch(e){}
+ return q;
+}
+
+/* ---------- Spiel ---------- */
+let mode='mix',N=2,names=[],sel,cur,rounds=0,match=0,pair={};
+const COL=['var(--p0)','var(--p1)','var(--p2)','var(--p3)'],HEX=['#8b5cf6','#ff8a00','#12b5a6','#ef4444'];
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+$('#modes').onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;[...$('#modes').children].forEach(x=>x.classList.toggle('sel',x==b))};
+$('#cnt').onclick=e=>{const b=e.target.closest('button');if(!b)return;N=+b.dataset.c;[...$('#cnt').children].forEach(x=>x.classList.toggle('sel',x==b));for(let i=0;i<4;i++)$('#np'+i).hidden=i>=N};
+$('#go').onclick=()=>{names=[...Array(N)].map((_,i)=>esc($('#n'+i).value.trim()||'Spieler '+(i+1)));rounds=match=0;pair={};$('#start').hidden=true;$('#game').hidden=false;$('#score').hidden=false;render()};
+$('#reset').onclick=()=>{$('#start').hidden=false;$('#game').hidden=true;$('#score').hidden=true};
+$('#next').onclick=render;
+function score(){$('#score').textContent=`❤️ ${match} von ${rounds} gleich`;$('#certbtn').hidden=rounds<1}
+function render(){
+ cur=nextQ();sel=Array(N).fill(null);
+ const t=$('#tag');t.textContent=cur.tag;t.className=cur.dil?'d':'';
+ $('#q').textContent=cur.q;
+ const s=$('#sit');s.hidden=!cur.sit;s.textContent=cur.sit||'';
+ $('#opts').innerHTML=cur.o.map((o,i)=>`<div class="opt"><div class="L">${'ABC'[i]}</div><div><b>${o.t}</b>${o.s?`<small>${o.s}</small>`:''}</div><div class="chips">${names.map((n,p)=>`<button data-p="${p}" data-i="${i}">${n}</button>`).join('')}</div></div>`).join('');
+ $('#res').innerHTML='';$('#next').hidden=true;score();status();
+}
+function status(){$('#status').innerHTML=names.map((n,p)=>`<span class="pill${sel[p]!==null?' ok':''}" style="${sel[p]!==null?'background:'+COL[p]:''}">${sel[p]!==null?'✓ '+n+' hat gewählt':n+' wählt…'}</span>`).join('')}
+$('#opts').onclick=e=>{
+ const b=e.target.closest('button[data-p]');if(!b||b.disabled)return;
+ const p=+b.dataset.p;sel[p]=+b.dataset.i;
+ document.querySelectorAll(`button[data-p="${p}"]`).forEach(x=>x.disabled=true);
+ status();if(sel.every(v=>v!==null))reveal();
+};
+function reveal(){
+ document.querySelectorAll('.chips').forEach(c=>c.hidden=true);
+ const same=sel.every(v=>v===sel[0]);rounds++;if(same)match++;
+ for(let i=0;i<N;i++)for(let j=i+1;j<N;j++)if(sel[i]===sel[j])pair[i+'-'+j]=(pair[i+'-'+j]||0)+1;
+ score();
+ document.querySelectorAll('.opt').forEach((el,i)=>{
+  const w=names.map((n,p)=>p).filter(p=>sel[p]===i);
+  if(w.length)el.insertAdjacentHTML('beforeend',`<div class="who">${w.map(p=>`<span style="background:${COL[p]}">${names[p]}</span>`).join('')}</div>`);
+  if(w.length>1)el.classList.add('win');
+ });
+ let h;
+ if(same)h=`<strong>🎉 Gleiches Team!</strong>${N>2?'Alle haben':'Ihr habt beide'} „${cur.o[sel[0]].t}“ gewählt.`;
+ else{const g=cur.o.map((o,i)=>names.filter((n,p)=>sel[p]===i)).filter(a=>a.length>1);
+  h=g.length?`<strong>🤝 Teilweise einig!</strong>${g.map(a=>a.join(' &amp; ')).join(' – ')} sehen das gleich.`:`<strong>🤔 Alle verschieden!</strong>Das gibt eine spannende Diskussion.`}
+ $('#res').innerHTML=h+`<div id="talk">💬 ${pick(TALK)}</div>`;
+ $('#next').hidden=false;if(same)boom();
+}
+function boom(){if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+ for(let i=0;i<26;i++){const s=document.createElement('span');s.className='fall';s.textContent=pick(['🎉','⭐','💖','✨','🎈']);s.style.left=Math.random()*100+'vw';s.style.animationDelay=Math.random()*.6+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),3200)}}
+
+/* ---------- Zertifikat ---------- */
+$('#certbtn').onclick=()=>{
+ const pr=[];for(let i=0;i<N;i++)for(let j=i+1;j<N;j++)pr.push({a:i,b:j,p:Math.round(100*(pair[i+'-'+j]||0)/rounds)});
+ const avg=Math.round(pr.reduce((s,x)=>s+x.p,0)/pr.length);
+ const lv=[[85,'Seelenverwandte','🌈'],[65,'Dreamteam','💖'],[45,'Gutes Team','⭐'],[0,'Spannende Gegensätze','🎭']].find(l=>avg>=l[0]);
+ const list=[...pr].sort((x,y)=>y.p-x.p).map(x=>`<span>${names[x.a]} &amp; ${names[x.b]}: ${x.p} %</span>`).join('');
+ const date=new Date().toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'});
+ $('#cert').innerHTML=`<div class="paper"><div class="frame">
+ <div class="orn">✦ ❖ ✦</div><div class="ct">Zertifikat</div><div class="cs">der Übereinstimmung</div>
+ <p>Hiermit wird feierlich bestätigt, dass</p>
+ <div class="cn">${names.map((n,i)=>`<span style="color:${HEX[i]}">${n}</span>`).join(' <i>♥</i> ')}</div>
+ <p>bei ${rounds} ${rounds==1?'Frage':'Fragen'} und Dilemmas eine Übereinstimmung erreicht ${N>2?'haben':'haben'} von</p>
+ <div class="seal"><b>${avg} %</b></div>
+ <div class="lv">${lv[2]} ${lv[1]} ${lv[2]}</div>
+ ${N>2?`<div class="pl">${list}</div>`:''}
+ <div class="dt">Ausgestellt am ${date}<br>Entscheide dich! · Offizielle Prüfstelle für beste Teams</div>
+ <div class="orn">✦ ❖ ✦</div></div></div>
+ <div class="acts"><button class="big" id="pr">🖨️ Drucken / als PDF</button><button class="big ghost" id="cl">Weiterspielen</button><p>Tipp: Auf dem Handy geht auch ein Screenshot.</p></div>`;
+ $('#cert').hidden=false;$('#cert').scrollTop=0;
+ $('#cl').onclick=()=>$('#cert').hidden=true;
+ $('#pr').onclick=()=>{try{window.print()}catch(e){}};
+};
+</script>
+</body>
+</html>
